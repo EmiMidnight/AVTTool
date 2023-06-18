@@ -25,7 +25,7 @@ namespace AVTTool
             public UInt32 fileSize = 0;
         }
 
-        class AvatarEntry
+        public class AvatarEntry
         {
             // the category (head, hair etc)
             public int categoryId { get; set; } = 0;
@@ -163,12 +163,35 @@ namespace AVTTool
                 // no metadata
                 textureSize -= 10;
 
-                // first 6 bytes are unneeded metadata still
-                fs.Seek(partsList[i].offset + 6, SeekOrigin.Begin);
+                fs.Seek(partsList[i].offset, SeekOrigin.Begin);
+                binaryReader.ReadUInt16(); // don't know what's used for
+                int offsetWidth = binaryReader.ReadUInt16();
+                int offsetHeight = binaryReader.ReadUInt16();
+
                 int width = binaryReader.ReadUInt16();
                 int height = binaryReader.ReadUInt16();
-                byte[] rgbaBytes = binaryReader.ReadBytes((int)textureSize);
-                ImageProcessing.ExportTexture(partsList[i].id, rgbaBytes, width, height);
+                int calculatedSize = width * height * 4; // 4 channels
+                int textureEnd = (int)(fs.Position + calculatedSize);
+                Console.WriteLine($"offset: {offsetWidth}x{offsetHeight}, res: {width}x{height}");
+                byte[] rgbaBytes = binaryReader.ReadBytes(calculatedSize);
+                ImageProcessing.ExportTexture(partsList[i], false, rgbaBytes, width, height, offsetWidth, offsetHeight);
+                if (textureSize != calculatedSize)
+                {
+                    // Hair has two layers so export the bg layer too
+                    if (partsList[i].categoryId == 7)
+                    {
+                        binaryReader.ReadUInt16(); // don't know what's used for
+                        offsetWidth = binaryReader.ReadUInt16();
+                        offsetHeight = binaryReader.ReadUInt16();
+                        width = binaryReader.ReadUInt16();
+                        height = binaryReader.ReadUInt16();
+                        calculatedSize = width * height * 4; // 4 channels
+                        byte[] rgbaBytes2 = binaryReader.ReadBytes(calculatedSize);
+                        ImageProcessing.ExportTexture(partsList[i], true, rgbaBytes2, width, height, offsetWidth, offsetHeight);
+                        Console.WriteLine($"offset: {offsetWidth}x{offsetHeight}, res: {width}x{height}");
+                    }
+                }
+
             }
             Console.WriteLine($"All done. Textures have been saved in a new folder called {fileName}");
         }

@@ -8,12 +8,27 @@ namespace AVTTool
 {
     internal class ImageProcessing
     {
-        public static void ExportTexture(int id, byte[] rgbaBytes, int width, int height)
+        public static void ExportTexture(Program.AvatarEntry entry, bool background, byte[] rgbaBytes, int width, int height, int offsetLeft, int offsetTop)
         {
-            using (var image = Image.LoadPixelData<Abgr32>(rgbaBytes, width, height))
+            using (Image<Rgba32> baseImage = new(256, 256))
             {
-                // Work with the image
-                image.SaveAsPng($"{Program.fileName}/{id}.png");
+                string imageName = $"{entry.id}";
+                if (entry.categoryId == 7)
+                {
+                    if (background)
+                    {
+                        imageName += "_bg";
+                    }
+                    else
+                    {
+                        imageName += "_fg";
+                    }
+                }
+                var image = Image.LoadPixelData<Abgr32>(rgbaBytes, width, height);
+                baseImage.Mutate(o => o
+                .DrawImage(image, new Point(offsetLeft, offsetTop), 1f)
+            );
+                baseImage.SaveAsPng($"{Program.fileName}/{imageName}.png");
             }
         }
     }
