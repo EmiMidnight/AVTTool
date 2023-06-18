@@ -45,18 +45,10 @@ jobs:
 
           # Delete output directory
           rm -r "$release_name"
-      - name: Generate release tag
-        id: generate_release_tag
-        uses: amitsingh-007/next-release-tag@v4.0.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag_prefix: 'v'
-          tag_template: 'yyyy.mm.dd.i'
-          prev_release_tag: "main"
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.generate_release_tag.outputs.next_release_tag }}
+          tag_name: foobar-${{ github.run_id }}-${{ github.run_attempt }}
           release_name: Release ${{ steps.generate_release_tag.outputs.next_release_tag }}
           files: "avttool*"
         env:
