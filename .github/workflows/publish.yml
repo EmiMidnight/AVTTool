@@ -10,11 +10,8 @@ jobs:
     name: Release
     strategy:
       matrix:
-        kind: ['linux', 'windows']
+        kind: ['windows']
         include:
-          - kind: linux
-            os: ubuntu-latest
-            target: linux-x64
           - kind: windows
             os: windows-latest
             target: win-x64
@@ -31,8 +28,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          tag=$(git describe --tags --abbrev=0)
-          release_name="app-$tag-${{ matrix.target }}"
+          release_name="app-${{ matrix.target }}"
 
           # Build everything
           dotnet publish --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
