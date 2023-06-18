@@ -33,7 +33,7 @@ jobs:
           release_name="avttool-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+          dotnet publish --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --self-contained -p:PublishSingleFile=True -p:PublishTrimmed=True -p:TrimMode=CopyUsed -p:PublishReadyToRun=True
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
@@ -48,7 +48,7 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: foobar-${{ github.run_id }}-${{ github.run_attempt }}
+          tag_name: release-${{ github.run_id }}-${{ github.run_attempt }}
           release_name: Release ${{ steps.generate_release_tag.outputs.next_release_tag }}
           files: "avttool*"
         env:
