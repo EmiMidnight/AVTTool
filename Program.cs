@@ -186,9 +186,14 @@ namespace AVTTool
                         width = binaryReader.ReadUInt16();
                         height = binaryReader.ReadUInt16();
                         calculatedSize = width * height * 4; // 4 channels
+                        Console.WriteLine($"bg ${partsList[i].id} at ${fs.Position} offset: {offsetWidth}x{offsetHeight}, res: {width}x{height}");
                         byte[] rgbaBytes2 = binaryReader.ReadBytes(calculatedSize);
-                        ImageProcessing.ExportTexture(partsList[i], true, rgbaBytes2, width, height, offsetWidth, offsetHeight);
-                        Console.WriteLine($"offset: {offsetWidth}x{offsetHeight}, res: {width}x{height}");
+                        if (width > 0 && height > 0)
+                        {
+                            ImageProcessing.ExportTexture(partsList[i], true, rgbaBytes2, width, height, offsetWidth, offsetHeight);
+                        }
+
+
                     }
                 }
 
