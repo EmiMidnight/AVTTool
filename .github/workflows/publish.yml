@@ -28,7 +28,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          release_name="app-${{ matrix.target }}"
+          release_name="avttool-${{ matrix.target }}"
 
           # Build everything
           dotnet publish --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
@@ -47,6 +47,7 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: "release"
           files: "app*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
