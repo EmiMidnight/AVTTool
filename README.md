@@ -1,6 +1,6 @@
 # AVTTool
 Small commandline utility to parse and extract both metadata and textures from the .avt format
-used in certain Sega arcade racing games. 
+used in certain Sega arcade racing games. Useful for making card editors, or if you're just curious.
 
 ## Features
  - Save textures as .png including transparency
